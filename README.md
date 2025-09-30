@@ -204,10 +204,10 @@ Osservazioni:
 ---
 
 ## Riconoscimenti
-- Segment Anything (SAM) — Meta AI
-- CLIP / open_clip — OpenAI / LAION / community OpenCLIP
-- DINOv2 — Meta AI
-- FAISS — Facebook AI Research
+- <a href="https://github.com/facebookresearch/segment-anything">Segment Anything (SAM)</a> — Meta AI
+- <a href="https://github.com/openai/CLIP">CLIP</a>  — OpenAI / LAION / community OpenCLIP
+- <a href="https://github.com/facebookresearch/dinov2">DINOv2</a> — Meta AI
+- <a href="https://github.com/facebookresearch/faiss">FAISS</a> — Facebook AI Research
 - E: NumPy, PyTorch, Gradio, SciPy, Timm, Pillow, OpenCV, Pandas, TQDM.
 
 ---
