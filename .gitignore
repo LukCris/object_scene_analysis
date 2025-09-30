@@ -1,0 +1,23 @@
+@"
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+.env*/
+*.log
+
+# Artifacts / dataset / pesi
+*.npy
+*.pt
+*.pth
+runs/
+weights/
+outputs/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+"@ | Out-File -FilePath .gitignore -Encoding utf8 -NoNewline
