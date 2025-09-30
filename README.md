@@ -108,10 +108,12 @@ Fine-tuning con `--freeze-text` (rimuovi per sbloccare anche il testo):
 ```bash
 python -m src.train.train_clip_finetune --freeze-text
 ```
-<img width="330" height="263" alt="confusion_matrix" src="https://github.com/user-attachments/assets/9eeae324-b832-4d57-a2de-4976cb93e951" />
-<img width="330" height="263" alt="curves_acc" src="https://github.com/user-attachments/assets/3fcf7cf6-869c-4d25-8890-b9a05c886adf" />
-<img width="330" height="263" alt="curves_loss" src="https://github.com/user-attachments/assets/27f42826-047b-4844-aae8-31eeb00b91f9" />
 
+<p align="center">
+  <img width="330" height="263" alt="confusion_matrix" src="https://github.com/LukCris/object_scene_analysis/blob/main/assets/confusion_matrix.png" />
+  <img width="330" height="263" alt="curves_acc" src="https://github.com/LukCris/object_scene_analysis/blob/main/assets/curves_acc.png" />
+  <img width="330" height="263" alt="curves_loss" src="https://github.com/LukCris/object_scene_analysis/blob/main/assets/curves_loss.png" />
+</p>
 
 ## Scene Analysis
 Esegue l’intera pipeline: SAM → mask/crop → embedding → cosine top-1 vs indice.
@@ -143,9 +145,25 @@ python -m src.scene.batch_analyze \
   --search-backend auto \                             # se si può usare faiss, lo fa
   --finetuned runs/clip_ft_v1/best.pt                 # per usare clip fine-tuned
 ```
-<img width="330" height="263" alt="analisi clip no_ft" src="https://github.com/user-attachments/assets/0f95e7c1-918f-4a8e-a813-f5c87575dd21" />
-<img width="330" height="263" alt="analisi clip ft" src="https://github.com/user-attachments/assets/b7767326-aa93-4cb2-b65c-1e98c9d6285e" />
-<img width="330" height="263" alt="analisi clip dino" src="https://github.com/user-attachments/assets/f63e6da6-a41c-4423-b728-2691364dd34d" />
+
+<p align="center">
+  <img 
+    width="330" height="263" 
+    alt="analisi clip no_ft" src="https://github.com/LukCris/object_scene_analysis/blob/main/assets/scene_0030_overlay_clip.jpg" 
+    title="Overlay clip pre-trained"
+  />
+  <img 
+    width="330" height="263" 
+    alt="analisi clip ft" src="https://github.com/LukCris/object_scene_analysis/blob/main/assets/scene_0030_overlay_ft.jpg" 
+    title="Overlay clip fine-tuned"
+  />
+  <img 
+    width="330" height="263" 
+    alt="analisi clip dino" 
+    src="https://github.com/LukCris/object_scene_analysis/blob/main/assets/scene_0030_overlay_dino.jpg" 
+    title="Overlay dinov2"
+  />
+</p>
 
 ---
 
