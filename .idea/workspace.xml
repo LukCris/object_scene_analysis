@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="dbb6bd43-3d85-4c99-8a8e-1d3c1dc12472" name="Changes" comment="Avanzamento del progetto">
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/gt.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0000.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0001.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0002.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0003.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0004.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0005.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0006.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0007.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0008.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0009.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0010.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0011.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0012.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0013.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0014.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0015.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0016.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0017.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0018.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0019.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0020.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0021.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0022.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0023.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0024.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0026.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0027.JPG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0028.JPG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0029.JPG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0030.JPG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/images/scene_0031.JPG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scenes_real/labels_project.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;LukCris&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/LukCris/Vision-pipeline.git&quot;,
+    &quot;accountId&quot;: &quot;d1ede8e8-2c24-4cde-bd4d-7fd2fbf1dd4f&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="328mUwThu1JRELIbJBy2h5hRi08" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.batch_analyze.executor": "Run",
+    "Python.build_index.executor": "Run",
+    "Python.build_manifests.executor": "Run",
+    "Python.check_leakage.executor": "Run",
+    "Python.check_split_leak.executor": "Run",
+    "Python.compose_scenes.executor": "Run",
+    "Python.eval_retrieval.executor": "Run",
+    "Python.extract_scenes_dev.executor": "Run",
+    "Python.face_detector.executor": "Run",
+    "Python.prova.executor": "Run",
+    "Python.query_image.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/lpaco/PycharmProjects/vision-pipeline/data",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.folding",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline\data" />
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline" />
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline\weights" />
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline\manifests" />
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline\src\data_prep" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline" />
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline\outputs_scenes\old" />
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline\outputs_scenes" />
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline\index" />
+      <recent name="C:\Users\lpaco\PycharmProjects\vision-pipeline\index\pre_fine_tune" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.23339.19" />
+        <option value="bundled-python-sdk-0029f7779945-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.23339.19" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="dbb6bd43-3d85-4c99-8a8e-1d3c1dc12472" name="Changes" comment="" />
+      <created>1756810592882</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1756810592882</updated>
+      <workItem from="1756810594241" duration="6508000" />
+      <workItem from="1756825198527" duration="3727000" />
+      <workItem from="1756913565062" duration="15758000" />
+      <workItem from="1756973956027" duration="10413000" />
+      <workItem from="1756997255034" duration="6354000" />
+      <workItem from="1757060592574" duration="7105000" />
+      <workItem from="1757140319489" duration="17248000" />
+      <workItem from="1757238019471" duration="4216000" />
+      <workItem from="1757341029640" duration="14001000" />
+      <workItem from="1757429773086" duration="11292000" />
+      <workItem from="1757441527848" duration="193000" />
+      <workItem from="1757513642065" duration="1155000" />
+      <workItem from="1757580095991" duration="7602000" />
+      <workItem from="1757602579929" duration="11185000" />
+      <workItem from="1757928945742" duration="2455000" />
+      <workItem from="1757951047450" duration="5584000" />
+      <workItem from="1758554560701" duration="1482000" />
+      <workItem from="1758698527225" duration="654000" />
+      <workItem from="1758795419596" duration="9420000" />
+      <workItem from="1758816484572" duration="3391000" />
+      <workItem from="1758873145754" duration="25197000" />
+      <workItem from="1758955012669" duration="14895000" />
+      <workItem from="1758986377124" duration="549000" />
+      <workItem from="1759051847884" duration="26000" />
+      <workItem from="1759151867675" duration="3716000" />
+      <workItem from="1759226727051" duration="1231000" />
+      <workItem from="1759229027410" duration="2646000" />
+    </task>
+    <task id="LOCAL-00001" summary="Avanzamento del progetto">
+      <option name="closed" value="true" />
+      <created>1756928832975</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1756928832975</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Avanzamento del progetto">
+      <option name="closed" value="true" />
+      <created>1756929190426</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1756929190426</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Avanzamento del progetto" />
+    <option name="LAST_COMMIT_MESSAGE" value="Avanzamento del progetto" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/vision_pipeline$batch_analyze.coverage" NAME="batch_analyze Coverage Results" MODIFIED="1756915687761" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/scene" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$build_index.coverage" NAME="build_index Coverage Results" MODIFIED="1756826655259" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/indexing" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$eval_retrieval.coverage" NAME="eval_retrieval Coverage Results" MODIFIED="1756827636094" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/eval" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$build_manifests.coverage" NAME="build_manifests Coverage Results" MODIFIED="1756825612747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/data_prep" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$extract_scenes_dev.coverage" NAME="extract_scenes_dev Coverage Results" MODIFIED="1756915085788" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/data_prep" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$check_split_leak.coverage" NAME="check_split_leak Coverage Results" MODIFIED="1757431752653" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/tools" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$prova.coverage" NAME="prova Coverage Results" MODIFIED="1757433245281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$check_leakage.coverage" NAME="check_leakage Coverage Results" MODIFIED="1756915309763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/indexing" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$face_detector.coverage" NAME="face_detector Coverage Results" MODIFIED="1756977423287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$query_image.coverage" NAME="query_image Coverage Results" MODIFIED="1756827395688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/search" />
+    <SUITE FILE_PATH="coverage/vision_pipeline$compose_scenes.coverage" NAME="compose_scenes Coverage Results" MODIFIED="1756980504813" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/synth" />
+  </component>
+</project>
