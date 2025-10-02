@@ -11,14 +11,8 @@ Moduli per:
   FAISS se disponibile (flat/IP).
 
 Output tipico per un segmento:
-- `decide_label_baseline(...)` → (label_top1, score, {dbg})
-- `decide_label_faiss(...)`    → (label_top1, score, {dbg})
-
-Note
-----
-- Gli embedding sono trattati come vettori unitari: coseno = prodotto interno.
-- FAISS richiede indice costruito su IP (inner product) e vettori L2-unit.
-- Le funzioni restituiscono anche un piccolo `dbg_info` utile per logging/UI.
+- `decide_label_baseline(...)` -> (label_top1, score, {dbg})
+- `decide_label_faiss(...)`    -> (label_top1, score, {dbg})
 """
 
 
@@ -31,7 +25,6 @@ import torchvision.transforms as T
 from PIL import Image
 from pathlib import Path
 
-# FAISS helpers
 from src.search.faiss_db import faiss_exists, load_faiss_index, search_faiss
 
 
@@ -48,7 +41,7 @@ _IMAGENET_STD = (0.229, 0.224, 0.225)
 # -----------------------------------------------------------------------------
 
 def _to_numpy(x):
-    """Converte `torch.Tensor` → `np.ndarray` (CPU, detach), altrimenti ritorna x.
+    """Converte `torch.Tensor` -> `np.ndarray` (CPU, detach), altrimenti ritorna x.
 
     Utile quando alcune API (es. FAISS) richiedono `float32` NumPy.
     """
@@ -89,7 +82,7 @@ def load_backend(
     Returns
     -------
     tuple
-        (kind, model, preprocess, device) dove `kind` ∈ {"clip", "dino"}.
+        (kind, model, preprocess, device) dove `kind` in {"clip", "dino"}.
     """
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"

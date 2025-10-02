@@ -75,7 +75,6 @@ I file `_classes.csv` (stile Roboflow) contengono filename, Unlabeled, Gaara, Na
 ## Preprocess -> Manifests
 Genera manifest puliti con policy `single_only` (drop Unlabeled, tieni solo righe con esattamente un personaggio positivo):
 ```bash
-# CLIP Baseline
 python -m src.data_prep.build_manifests
 ```
 

@@ -10,11 +10,16 @@ __pycache__/
 
 # Artifacts / dataset / pesi
 *.npy
+*.index
 *.pt
 *.pth
 runs/
 weights/
 outputs/
+outputs_scenes/
+outputs_scenes_*/
+data/scenes_real
+
 
 # IDE
 .idea/

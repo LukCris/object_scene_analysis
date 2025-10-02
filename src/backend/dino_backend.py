@@ -13,7 +13,7 @@ Note
 - Gli embedding sono unit norm (L2=1): il prodotto interno corrisponde alla
   cosine similarity. Questo li rende compatibili con ricerche FAISS/IP e
   con metriche coseno.
-- Le trasformazioni seguono lo standard ImageNet: `Resize→CenterCrop 224→Tensor→Normalize`.
+- Le trasformazioni seguono lo standard ImageNet: `Resize -> CenterCrop 224 -> Tensor -> Normalize`.
 - Il modello viene messo in `eval()` e usato con `@torch.no_grad()` per evitare
   di tracciare il grafo (più efficiente in inference).
 """
@@ -68,7 +68,7 @@ def embed_pil_dino(pil_img: Image.Image, model, preprocess, device):
     Passi
     -----
     1) Converte l'immagine in RGB (per sicurezza)
-    2) Applica il `preprocess` (Resize→CenterCrop 224→Normalize)
+    2) Applica il `preprocess` (Resize -> CenterCrop 224 -> Normalize)
     3) Aggiunge la dimensione batch e sposta su `device`
     4) Forward del modello (shape `(1, D)`)
     5) Normalizza L2 lungo la dimensione dei canali (`dim=-1`)

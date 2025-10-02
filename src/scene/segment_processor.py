@@ -13,12 +13,7 @@ preparare ritagli compatibili con CLIP/DINO:
 - `rgba_to_rgb_for_clip(...)` : compone un RGB (PIL) adatto al preprocess CLIP;
   se presente alpha, effettua compositing su un background uniforme.
 
-Note
-----
-- OpenCV usa BGR; PIL usa RGB → la conversione è gestita quando necessario.
-- Le funzioni assumono dtype `uint8` e shape standard (H,W,3|4) per immagini,
-  (H,W[,(1)]) per maschere. Gli `assert` aiutano a fallire presto con messaggio
-  chiaro.
+Nota: OpenCV usa BGR; PIL usa RGB -> la conversione è gestita quando necessario.
 """
 
 import cv2

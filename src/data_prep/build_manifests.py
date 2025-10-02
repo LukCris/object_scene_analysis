@@ -20,12 +20,8 @@ Output prodotti (in `--out`)
 - `classes.json`: lista delle classi/colonne considerate, nell'ordine fornito.
 - `stats_<split>.json`: statistiche dettagliate per split (kept/discarded, ecc.).
 
-Note d'uso (CLI)
-----------------
-Esempio:
-    python build_manifest.py --root data --out manifests
-
 Prerequisiti struttura cartelle:
+----------------------------
     <root>/train/_classes.csv
     <root>/valid/_classes.csv
     <root>/test/_classes.csv

@@ -12,12 +12,6 @@ File generati in `<index_dir>`
 ------------------------------
 - `faiss.index`      : indice FAISS serializzato
 - `faiss_meta.json`  : metadati (metric, kind, dimensione, #vettori)
-
-Note
-----
-- Con `metric="ip"` e vettori unitari (||x||=1), il prodotto interno è
-  numericamente equivalente alla similarità coseno.
-- Per dataset piccoli/medi, `IndexFlatIP/L2` è semplice e riproducibile.
 """
 
 import json, faiss
@@ -131,7 +125,7 @@ def search_faiss(idx, q: np.ndarray, k: int = 5) -> Tuple[np.ndarray, np.ndarray
 
     Note
     ----
-    - Con `metric='ip'` e vettori unitari, `scores` è la similarità coseno.
+    - Con `metric='ip'` e vettori unitari, `scores` è la cosine similarity.
     """
     if q.ndim == 1:
         q = q[None, :]

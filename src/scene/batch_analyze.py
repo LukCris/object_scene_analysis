@@ -1,25 +1,17 @@
-from __future__ import annotations
-
 """
 batch_analyze.py
 
 Scopo
 -----
 Esegue la scene analysis in batch caricando una sola volta:
-- backend di embedding (CLIP o DINOv2),
-- indice (embeddings + meta),
-- opzionalmente FAISS,
-- e SAM (generatore automatico di maschere).
+- backend di embedding (CLIP o DINOv2)
+- indice (embeddings + meta)
+- opzionalmente FAISS
+- SAM
 
 Questo elimina l'overhead di `analyze_scene.py` che ricarica tutto a ogni immagine.
 L'API espone una classe `Analyzer` con `analyze_one(scene_path, out_dir, ...)` e
 una CLI che processa un'intera cartella.
-
-Dipendenze interne:
-- src.sam_infer.segment_scene: load_sam_automatic, generate_masks, mask_to_bbox
-- src.scene.segment_processor: apply_mask_rgba, crop_mask_tight, rgba_to_rgb_for_clip
-- src.search.segment_matcher: load_backend, load_index, topk_cosine, decide_label_baseline
-- src.search.faiss_db: faiss_exists, load_faiss_index, search_faiss
 """
 
 import argparse, json, cv2
@@ -200,7 +192,7 @@ class Analyzer:
         finetuned: Optional[str] = None,
         dino_model: str = "dinov2_vits14",
         # FAISS / ricerca
-        search_backend: str = "auto",  # "auto" → usa FAISS se presente, altrimenti naive
+        search_backend: str = "auto",  # "auto" -> usa FAISS se presente, altrimenti naive
         # SAM
         sam_ckpt: str = "weights/sam_vit_b_01ec64.pth",
         sam_model_type: str = "vit_b",
@@ -250,7 +242,7 @@ class Analyzer:
         crops_dir = out_dir / (scene_path.stem + "_crops")
         crops_dir.mkdir(parents=True, exist_ok=True)
 
-        # SAM → maschere
+        # SAM -> maschere
         masks = generate_masks(bgr, self.sam_gen, min_area=min_area, max_masks=max_masks)
 
         preds_all = []

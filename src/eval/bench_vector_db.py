@@ -16,8 +16,8 @@ Assunzioni
 Output
 ------
 - Tempo totale e per-query per NAIVE e FAISS.
-- Top-1 parity: percentuale di query per cui il miglior risultato naïve
-  coincide col miglior risultato FAISS (deve essere ~100% con FlatIP).
+- Top-1 parity: percentuale di query per cui il miglior risultato naive
+  coincide col miglior risultato FAISS (deve essere circa 100% con FlatIP).
 """
 
 import argparse

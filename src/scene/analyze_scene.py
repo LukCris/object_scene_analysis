@@ -4,8 +4,8 @@ analyze_scene.py
 Scopo
 -----
 Data una scena (immagine), esegue:
-1) Segmentazione automatica con SAM → maschere candidate
-2) Post-processing maschere → crop RGBA con contesto, conversione a PIL RGB
+1) Segmentazione automatica con SAM -> maschere candidate
+2) Post-processing maschere -> crop RGBA con contesto, conversione a PIL RGB
 3) Embedding (CLIP o DINOv2) + ricerca naive (coseno) o FAISS (IP)
 4) Assegnazione label/top-1 per ciascun segmento
 5) Salvataggio risultati:
@@ -16,8 +16,6 @@ Data una scena (immagine), esegue:
 
 Note
 ----
-- La pipeline usa vettori L2-normalizzati: coseno = dot product.
-- Con FAISS flat/IP l'IP corrisponde al coseno per vettori unitari.
 - È presente TTA di embedding (flip orizzontale) per maggiore stabilità.
 - Filtri geometrici (`min/max_area_ratio`) e NMS leggero ripuliscono l'overlay.
 """
@@ -137,8 +135,8 @@ def iou(a, b):
 def _nms_preds(boxes_labels_scores, iou_thr: float = 0.30):
     """NMS leggero sulle predizioni overlay basato su IoU.
 
-    Mantiene le box in ordine di score decrescente ed elimina quelle con IoU
-    ≥ `iou_thr` con una box già tenuta.
+    Mantiene le box in ordine di score decrescente ed elimina quelle con
+    IoU >= `iou_thr` con una box già tenuta.
     """
     keep, used = [], [False] * len(boxes_labels_scores)
 
@@ -167,7 +165,7 @@ def _select_topK_distinct(
 ):
     """Selezione euristica di K box distinte e con score elevato.
 
-    - `score_backoff`: tentativi a soglie decrescenti (es. 0.80 → 0.70 → 0.60)
+    - `score_backoff`: tentativi a soglie decrescenti (es. 0.80 -> 0.70 -> 0.60)
     - `prefer_diff_label`: se True e c'è un unico pick, prova a scegliere la
       seconda box con label diversa se lo score è comparabile (entro `delta`).
     """
@@ -239,7 +237,7 @@ def analyze_scene(
     index_dir: Path = Path("index"),
     out_dir: Path = Path("outputs"),
     # ricerca
-    search_backend: str = "auto",  # "auto" → usa FAISS se presente, altrimenti naive
+    search_backend: str = "auto",  # "auto" -> usa FAISS se presente, altrimenti naive
     # modelli
     sam_ckpt: str = "weights/sam_vit_b_01ec64.pth",
     pretrained: str = "laion2b_s34b_b79k",

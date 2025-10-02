@@ -16,21 +16,6 @@ salva:
 
 Nota: se viene passato un checkpoint `--finetuned` di CLIP, il codice lo carica
 per gestire differenze di chiavi.
-
-CLI (esempi)
-------------
-1) CLIP pre-addestrato, indice FAISS:
-   python build_index.py --manifest manifests/train.csv --out index_clip \
-       --faiss --max-per-class 120 --dedup-thr 0.998
-
-2) CLIP fine-tuned (checkpoint .pt):
-   python build_index.py --manifest manifests/train.csv --out index_ft \
-       --finetuned runs/clip_ft_v1/best.pt --faiss
-
-3) Backend alternativo DINOv2:
-   python build_index.py --backend dino \
-       --manifest manifests/train.csv --out index_dino
-
 """
 
 import argparse, json, random, torch, open_clip

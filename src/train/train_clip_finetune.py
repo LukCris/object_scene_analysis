@@ -20,7 +20,6 @@ Pipeline
 Note importanti
 ---------------
 - Gli embedding immagine/testo sono L2-normalizzati -> prodotto interno ≡ coseno.
-- `logit_scale` viene clampato a `log(max_logit_scale)` per stabilità numerica.
 - Se `--freeze-text`, i prototipi testuali vengono precomputati e mantenuti fissi.
 """
 
@@ -48,7 +47,6 @@ class ManifestImageDataset(torch_data.Dataset):
 
     - Usa il `preprocess` restituito da `open_clip.create_model_and_transforms`.
     - Assume che i path siano validi e le label appartengano a `classes`.
-      (Se vuoi maggiore robustezza, puoi intercettare file mancanti qui.)
     """
 
     def __init__(self, manifest_csv: str | Path, classes: List[str], preprocess):
@@ -314,7 +312,7 @@ def eval_confusion_and_per_class(
 
 def main() -> None:
     ap = argparse.ArgumentParser(
-        description="Fine-tuning contrastivo (image→text CE) di CLIP su manifest."
+        description="Fine-tuning contrastivo (image -> text CE) di CLIP su manifest."
     )
     ap.add_argument("--train-manifest", default="manifests/train.csv")
     ap.add_argument("--val-manifest", default="manifests/valid.csv")
@@ -353,7 +351,7 @@ def main() -> None:
     tokenizer = open_clip.get_tokenizer(args.model)
     model = model.to(device)
 
-    # (opz) freeze: default allena torre visiva; se `freeze_vision` → solo logit_scale
+    # (opz) freeze: default allena torre visiva; se `freeze_vision` -> solo logit_scale
     if args.freeze_text:
         # Congela tutto tranne la torre visiva e logit_scale
         for name, p in model.named_parameters():
@@ -392,7 +390,7 @@ def main() -> None:
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Salva anche le classi (ridondante ma utile)
+    # Salva anche le classi
     (out_dir / "classes.json").write_text(
         json.dumps(classes, ensure_ascii=False, indent=2), encoding="utf-8"
     )
@@ -467,7 +465,7 @@ def main() -> None:
         # checkpoint sempre
         save_checkpoint(out_dir, epoch, model, optimizer, scaler, best=False)
 
-        # best selection: val_acc ↑, tie-breaker val_loss ↓
+        # Best selection
         improved = (val_acc > best_acc) or (val_acc == best_acc and val_loss < best_val_loss)
         if improved:
             best_acc, best_val_loss, bad = val_acc, val_loss, 0
@@ -482,7 +480,7 @@ def main() -> None:
     # salva metriche/curve
     (out_dir / "metrics.json").write_text(json.dumps(metrics, indent=2), encoding="utf-8")
 
-    # Confusion matrix & per-class accuracy su validation
+    # Confusion matrix e per-class accuracy su validation
     num_classes = len(classes)
     text_feats_eval = (
         text_feats_fixed if text_feats_fixed is not None else build_text_features(classes, model, tokenizer, device)

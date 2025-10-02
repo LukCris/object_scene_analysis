@@ -10,7 +10,7 @@ Valuta le predizioni di `analyze_scene` al livello oggetto (bbox + label):
 - esegue un matching ottimo tra GT e pred tramite algoritmo di Hungarian
   (sul costo = 1−IoU, con soglia IoU minima);
 - calcola accuracy globale top-1 e per-classe, più diagnostiche:
-  - detection recall @IoU≥thr (quanti GT sono stati coperti da almeno una pred)
+  - detection recall @IoU >= thr (quanti GT sono stati coperti da almeno una pred)
   - classification accuracy condizionata ai match accettati.
 """
 
@@ -68,13 +68,13 @@ def main() -> None:
     ap.add_argument(
         "--label-map",
         default="",
-        help="Mappa nomi pred→GT, es. 'Gara:Gaara;Sakura:Sakura'.",
+        help="Mappa nomi pred -> GT, es. 'Gara:Gaara;Sakura:Sakura'.",
     )
     ap.add_argument("--csv-out", default="", help="(Opzionale) Path a CSV riassuntivo per classe.")
     ap.add_argument("--verbose", action="store_true", help="Log dettagliato per scena.")
     args = ap.parse_args()
 
-    # Pred→GT label normalization
+    # Pred -> GT label normalization
     label_map: Dict[str, str] = {}
     if args.label_map:
         for tok in args.label_map.split(";"):
@@ -96,7 +96,7 @@ def main() -> None:
     missing_preds = []
 
     # diagnostiche: detection & classification
-    det_matched_sum = 0  # #GT coperti (almeno un match IoU≥thr)
+    det_matched_sum = 0  # #GT coperti (almeno un match IoU >= thr)
     det_total_sum = 0    # #GT totali
     cls_corr_on_matched = 0  # #match con label corretta
     cls_matched_total = 0    # #match accettati
@@ -146,7 +146,7 @@ def main() -> None:
         valid = iou_mat >= thr
         if not valid.any():
             if args.verbose:
-                print(f"[{stem}] Nessuna coppia con IoU≥{thr}.")
+                print(f"[{stem}] Nessuna coppia con IoU >= {thr}.")
             continue
 
         # Hungarian sul costo (1−IoU), con invalidazioni sotto soglia
@@ -154,7 +154,7 @@ def main() -> None:
         cost[~valid] = 1e9  # grande costo per impedire match
         rows, cols = linear_sum_assignment(cost)
 
-        # Conta corretti: solo match validi (IoU≥thr) con label esatta
+        # Conta corretti: solo match validi (IoU >= thr) con label esatta
         accepted = 0
         scene_correct = 0
         for i, j in zip(rows, cols):
@@ -176,7 +176,7 @@ def main() -> None:
 
         if args.verbose:
             print(
-                f"[{stem}] GT={G}  Pred={P}  Matched@IoU≥{thr}: {accepted}  Correct: {scene_correct}"
+                f"[{stem}] GT={G}  Pred={P}  Matched@IoU >= {thr}: {accepted}  Correct: {scene_correct}"
             )
 
     # Risultati complessivi
@@ -202,7 +202,7 @@ def main() -> None:
     if det_total_sum > 0:
         det_recall = det_matched_sum / det_total_sum
         print(
-            f"\n[Diag] Detection recall @IoU≥{args.iou_match}: {det_recall:.4f}  [{det_matched_sum}/{det_total_sum}]"
+            f"\n[Diag] Detection recall @IoU >= {args.iou_match}: {det_recall:.4f}  [{det_matched_sum}/{det_total_sum}]"
         )
     if cls_matched_total > 0:
         cls_acc_cond = cls_corr_on_matched / cls_matched_total

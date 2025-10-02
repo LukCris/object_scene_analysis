@@ -257,7 +257,7 @@ def ui_db_query(
 
     # Embedding della query
     if q_img is not None:
-        # Query immagine → embedding con lo stesso backend dell'indice
+        # Query immagine -> embedding con lo stesso backend dell'indice
         z = embed_pil_generic(q_img.convert("RGB"), backend_tuple)
     else:
         # Query testuale: solo se backend=CLIP
@@ -352,7 +352,7 @@ def build_ui():
                         min_area_px = gr.Number(value=10000, label="SAM min area (px)", precision=0)
                         max_masks = gr.Slider(1, 16, value=12, step=1, label="SAM max masks")
                         expand_bbox_ratio = gr.Slider(0.0, 0.3, value=0.18, step=0.01, label="Espansione bbox (ratio)")
-                        bg_value = gr.Dropdown(choices=[0,128,220,255], value=0, label="BG compositing (RGBA→RGB)")
+                        bg_value = gr.Dropdown(choices=[0,128,220,255], value=0, label="BG compositing (RGBA -> RGB)")
                         min_area_ratio = gr.Slider(0.0, 0.2, value=0.04, step=0.01, label="Area min (ratio immagine)")
                         max_area_ratio = gr.Slider(0.2, 1.0, value=0.55, step=0.01, label="Area max (ratio immagine)")
 
