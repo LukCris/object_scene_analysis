@@ -133,10 +133,13 @@ def iou(a, b):
     return inter / uni if uni > 0 else 0.0
 
 def _nms_preds(boxes_labels_scores, iou_thr: float = 0.30):
-    """NMS leggero sulle predizioni overlay basato su IoU.
+    """NMS (Non-Maximum Suppression) leggero sulle predizioni overlay basato su IoU.
 
     Mantiene le box in ordine di score decrescente ed elimina quelle con
-    IoU >= `iou_thr` con una box già tenuta.
+    IoU >= `iou_thr` (si sovrappone troppo) con una box già tenuta.
+
+    Effetto: se SAM produce più segmenti/bbox quasi identici sullo stesso personaggio,
+    ne mostra uno solo (il migliore).
     """
     keep, used = [], [False] * len(boxes_labels_scores)
 
@@ -166,17 +169,22 @@ def _select_topK_distinct(
     """Selezione euristica di K box distinte e con score elevato.
 
     - `score_backoff`: tentativi a soglie decrescenti (es. 0.80 -> 0.70 -> 0.60)
-    - `prefer_diff_label`: se True e c'è un unico pick, prova a scegliere la
-      seconda box con label diversa se lo score è comparabile (entro `delta`).
+    - `prefer_diff_label`: se True, quando ha già preso una sola box e la seconda
+       migliore ha stessa label, prova a sostituirla con una di label diversa se:
+       non si sovrappone troppo agli altri pick, e lo score è comparabile (delta=0.05) oppure supera la soglia corrente.
     """
 
+    # ordino per score decrescente
     bls = sorted(bls, key=lambda t: t[5], reverse=True)
     for thr in score_backoff:
+        # filtro i candidati con score >= thr
         cands = [b for b in bls if b[5] >= thr]
         picked = []
         for cand in cands:
+            # conservo solo quelli con IoU < iou_thr (che non si sovrappongono molto))
             if any(iou(cand, p) >= iou_thr for p in picked):
                 continue
+            # seleziono, se richiesto, label diverse
             if prefer_diff_label and len(picked) == 1 and cand[4] == picked[0][4]:
                 alt = next(
                     (
@@ -189,6 +197,7 @@ def _select_topK_distinct(
                 if alt and (picked[0][5] - alt[5] <= delta or alt[5] >= thr):
                     cand = alt
             picked.append(cand)
+            # se raggiungo il massimo mi fermo
             if len(picked) == K:
                 return picked
 

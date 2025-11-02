@@ -50,7 +50,7 @@ def load_sam_automatic(
     Parametri principali
     --------------------
     points_per_side : int
-        Densità della griglia di punti sul full image. Più alto => più proposte.
+        Densità della griglia di punti sull'immagine. Più alto => più proposte.
     pred_iou_thresh : float
         Soglia minima sull'IoU predetto per accettare una proposta.
     stability_score_thresh : float
@@ -165,7 +165,7 @@ def generate_masks(
 # -----------------------------------------------------------------------------
 
 def mask_to_bbox(seg: np.ndarray) -> Tuple[int, int, int, int]:
-    """Restituisce il bounding box tight (x1, y1, x2, y2) da una maschera booleana.
+    """Restituisce il bounding box tight (x1, y1, x2, y2) da una maschera binaria.
 
     Se `seg` non contiene pixel attivi, ritorna (0, 0, 0, 0).
     """

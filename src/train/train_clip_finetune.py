@@ -23,6 +23,7 @@ Note importanti
 - Se `--freeze-text`, i prototipi testuali vengono precomputati e mantenuti fissi.
 """
 
+
 import argparse, json, os, time, open_clip, torch
 
 from dataclasses import dataclass
@@ -395,7 +396,7 @@ def main() -> None:
         json.dumps(classes, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
-    # Precompute text feats se il ramo testo è congelato
+    # Precompute text feature se il ramo testo è congelato, riusandoli ogni volta
     text_feats_fixed = None
     if args.freeze_text:
         text_feats_fixed = build_text_features(classes, model, tokenizer, device)

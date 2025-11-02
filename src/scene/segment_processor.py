@@ -28,6 +28,9 @@ from PIL import Image
 def apply_mask_rgba(image_bgr: np.ndarray, seg: np.ndarray) -> np.ndarray:
     """Applica una maschera binaria a un'immagine BGR e restituisce un BGRA.
 
+    Esempio: Data una maschera per un immagine con Naruto, la maschera viene
+    applicata sull'immagine, rendendo trasparente tutto ciò che non è nella maschera
+
     Canali in uscita:
     - B,G,R = immagine originale
     - A     = 255 dove `seg=True`, 0 altrove
@@ -65,6 +68,9 @@ def crop_mask_tight(image_bgra: np.ndarray, seg: np.ndarray, pad: int = 8) -> np
 
     Il canale alpha (se presente) viene mantenuto. Se la maschera è vuota,
     restituisce l'input (fallback sicuro).
+
+    Esempio: data un'immagine con una maschera su Naruto (e tutto attorno trasparente),
+    l'immagine viene ritagliata mantenendo solo il box con Naruto
 
     Note: il bbox è inclusivo; per slicing numpy usiamo y2+1/x2+1.
 
@@ -105,6 +111,9 @@ def rgba_to_rgb_for_clip(image_bgra: np.ndarray, bg_value: int = 255) -> Image.I
     """Converte BGR/BGRA (OpenCV) in RGB (PIL) pronto per CLIP/DINO.
 
     Se presente un canale alpha, compone su un background uniforme `bg_value`.
+
+    Esempio: se si riceve un immagine con solo Naruto in RGBA, si porta l'immagine in RGB.
+    Se presente della "trasparenza" lo si converte in bianco.
 
     Parameters
     ----------

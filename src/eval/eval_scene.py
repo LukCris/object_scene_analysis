@@ -1,14 +1,22 @@
 """
 eval_scene.py
 
+Si calcola la IoU andando a vedere quanto sono sovrapposti Gt e
+pred. Più è alto IoU più sono sovrapposte. Si considerano valide
+solo le coppie con IoU >= 0.5. Si costruisce la matrice 1-IoU e
+per ogni GT si associa la predizione con IoU più alto
+
 Scopo
 -----
 Valuta le predizioni di `analyze_scene` al livello oggetto (bbox + label):
 - legge un ground truth per scena (`gt.json`) con lista di oggetti `{bbox,label}`;
 - legge i file predetti per scena (modalità EVAL: `{scene}.json` oppure
   overlay: `{scene}_overlay.json` se `--use-overlay`);
-- esegue un matching ottimo tra GT e pred tramite algoritmo di Hungarian
-  (sul costo = 1−IoU, con soglia IoU minima);
+- calcola IoU andando a vedere quanto sono sovrapposti GT e pred.
+- scarta le coppie con IoU < soglia (imposta a un valore molto alto)
+- esegue un matching ottimo tra GT e pred tramite algoritmo di Hungarian.
+  Selezionando la combinazione che minimizza la somma totale dei costi (o
+  massimizza la somma totale degli IoU)
 - calcola accuracy globale top-1 e per-classe, più diagnostiche:
   - detection recall @IoU >= thr (quanti GT sono stati coperti da almeno una pred)
   - classification accuracy condizionata ai match accettati.
