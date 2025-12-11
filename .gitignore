@@ -14,6 +14,9 @@ __pycache__/
 *.pt
 *.pth
 runs/
+index/
+index_*/
+manisfests/
 weights/
 outputs/
 outputs_scenes/
@@ -25,4 +28,6 @@ data/scenes_real
 .idea/
 *.iml
 .vscode/
+
+*.sh
 "@ | Out-File -FilePath .gitignore -Encoding utf8 -NoNewline

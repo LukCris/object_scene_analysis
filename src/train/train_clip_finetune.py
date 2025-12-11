@@ -3,26 +3,17 @@ train_clip_finetune.py
 
 Scopo
 -----
-Fine-tuning (leggero) di CLIP su un dataset custom con manifest `path,label`.
+Fine-tuning (leggero-ma-serio) di CLIP su un dataset custom con manifest `path,label`.
 Alleniamo la torre visiva a discriminare le classi, usando prototipi testuali
 (calcolati da prompt/alias) come classifier (cosine → logit con `logit_scale`).
 
-Pipeline
---------
-1) Carica CLIP (open_clip) + preprocess train/val + tokenizer
-2) Prepara i Dataset da manifest CSV (train/val)
-3) Costruisce i prototipi testuali (media su template × alias per classe)
-4) Train loop: `CrossEntropy(img @ text.T * exp(logit_scale))` con opz.:
-   - class weights (bilanciamento), label smoothing
-   - gradient accumulation, AMP, grad clip, early stopping
-5) Valuta su validation, salva checkpoint/best e metriche, confusion matrix
-
-Note importanti
----------------
-- Gli embedding immagine/testo sono L2-normalizzati -> prodotto interno ≡ coseno.
-- Se `--freeze-text`, i prototipi testuali vengono precomputati e mantenuti fissi.
+Novità principali
+-----------------
+- Unfreeze parziale degli ultimi blocchi del Vision Transformer (non tutta la torre).
+- Scheduler: warmup lineare + cosine decay sul learning rate.
+- Prompt e alias migliorati per dataset in stile anime/Naruto.
+- Early stopping, class weights, label smoothing, grad clip, AMP, confusion matrix, plot metriche.
 """
-
 
 import argparse, json, os, time, open_clip, torch
 
@@ -39,9 +30,9 @@ import torch.optim as optim
 import torch.utils.data as torch_data
 
 
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Dataset
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 class ManifestImageDataset(torch_data.Dataset):
     """Dataset da manifest CSV `path,label`.
@@ -80,9 +71,9 @@ class ManifestImageDataset(torch_data.Dataset):
         return x, y
 
 
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Utils
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 def set_seed(s: int) -> None:
     import random
@@ -98,6 +89,40 @@ def set_seed(s: int) -> None:
 class Batch:
     images: torch.Tensor  # (B,3,H,W)
     targets: torch.Tensor  # (B,)
+
+
+def _get_visual_blocks(model):
+    """Restituisce la lista dei blocchi del Vision Transformer (resblocks).
+
+    Pensato per i ViT di open_clip: model.visual.transformer.resblocks
+    """
+    v = model.visual
+    if hasattr(v, "transformer") and hasattr(v.transformer, "resblocks"):
+        return v.transformer.resblocks
+    raise AttributeError(
+        "Impossibile trovare visual.transformer.resblocks. Stampa `print(model)` "
+        "per adattare `_get_visual_blocks` alla tua architettura."
+    )
+
+
+def unfreeze_last_visual_blocks(model, num_blocks: int = 2):
+    """Congela tutto, poi sblocca logit_scale e gli ultimi N blocchi visivi."""
+    # congela TUTTO
+    for p in model.parameters():
+        p.requires_grad = False
+
+    # sblocca logit_scale
+    if hasattr(model, "logit_scale"):
+        model.logit_scale.requires_grad = True
+
+    # sblocca ultimi N resblocks del vision encoder
+    blocks = list(_get_visual_blocks(model))
+    num_blocks = max(1, min(num_blocks, len(blocks)))
+    for block in blocks[-num_blocks:]:
+        for p in block.parameters():
+            p.requires_grad = True
+
+    print(f"[unfreeze] Ultimi {num_blocks} blocchi visivi + logit_scale sono allenabili.")
 
 
 def build_text_features(
@@ -119,22 +144,28 @@ def build_text_features(
     Restituisce: `torch.Tensor (C, D)` su `device`.
     """
     if prompt_templates is None:
+        # Template pensati per anime/manga, ma generici
         prompt_templates = [
             "{}",
             "{} from Naruto",
             "an anime portrait of {}",
-            "official character art of {}",
-            "a cosplay photo of {}",
+            "official character art of {} from Naruto Shippuden",
+            "a detailed close-up of {} in anime style",
+            "{} in Naruto anime screenshot",
+            "manga panel of {} from Naruto",
         ]
 
-    # alias di default per le 4 classi del progetto
+    # alias di default per alcune classi tipiche Naruto
     default_aliases = {
-        "Gara": ["Gara", "Gaara"],
-        "Naruto": ["Naruto", "Uzumaki Naruto"],
+        "Gara": ["Gaara", "Gaara of the Sand"],
+        "Naruto": ["Naruto", "Uzumaki Naruto", "Naruto Uzumaki"],
         "Sakura": ["Sakura", "Haruno Sakura"],
         "Tsunade": ["Tsunade", "Lady Tsunade"],
+        # fallback per classi generiche
     }
+
     if aliases_map:
+        # sovrascrive/estende i default
         for k, v in aliases_map.items():
             default_aliases[k] = v
 
@@ -184,9 +215,9 @@ def _count_trainable(m) -> int:
     return sum(p.numel() for p in m.parameters() if p.requires_grad)
 
 
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Train
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 def train_epoch(
     model,
@@ -223,7 +254,10 @@ def train_epoch(
             logits = (logit_scale.exp() * img @ text_feats.t())  # (B,C)
             loss = loss_fn(logits, targets) / accum_steps
 
-        (scaler.scale(loss) if scaler is not None else loss).backward()
+        if scaler is not None:
+            scaler.scale(loss).backward()
+        else:
+            loss.backward()
 
         if step % accum_steps == 0:
             if clip_grad is not None:
@@ -248,9 +282,9 @@ def train_epoch(
     return avg_loss, acc
 
 
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Eval
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 @torch.no_grad()
 def evaluate(model, data: torch_data.DataLoader, device, text_feats, logit_scale, return_loss: bool = True):
@@ -307,9 +341,9 @@ def eval_confusion_and_per_class(
     return cm, per_class_acc, y_true, y_pred
 
 
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Main (CLI)
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 
 def main() -> None:
     ap = argparse.ArgumentParser(
@@ -318,12 +352,13 @@ def main() -> None:
     ap.add_argument("--train-manifest", default="manifests/train.csv")
     ap.add_argument("--val-manifest", default="manifests/valid.csv")
     ap.add_argument("--classes", default="manifests/classes.json", help="Ordine canonico etichette.")
-    ap.add_argument("--out", default="runs/clip_ft_v1")
+    ap.add_argument("--aliases-json", default=None, help="JSON opzionale con alias per classe.")
+    ap.add_argument("--out", default="runs/clip_ft_v2")
 
     ap.add_argument("--model", default="ViT-B-32")
     ap.add_argument("--pretrained", default="laion2b_s34b_b79k")
 
-    ap.add_argument("--epochs", type=int, default=8)
+    ap.add_argument("--epochs", type=int, default=50)
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--accum-steps", type=int, default=1, help="Gradient accumulation.")
 
@@ -332,17 +367,38 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=42)
 
     ap.add_argument("--freeze-text", action="store_true", help="Congela il ramo testuale; di default è disattivato.")
-    ap.add_argument("--freeze-vision", action="store_true", default=False)
+    ap.add_argument(
+        "--freeze-vision",
+        action="store_true",
+        default=False,
+        help="Se attivo, congela la torre visiva (allena solo logit_scale).",
+    )
+    ap.add_argument(
+        "--unfreeze-visual-blocks",
+        type=int,
+        default=2,
+        help="Se --freeze-vision NON è impostato, sblocca solo gli ultimi N blocchi visivi.",
+    )
 
     ap.add_argument("--prompt", default="an anime portrait of {} from Naruto")
     ap.add_argument("--patience", type=int, default=5, help="Early stopping patience on val_loss.")
     ap.add_argument("--label-smoothing", type=float, default=0.1)
     ap.add_argument("--max-logit-scale", type=float, default=100.0, help="Clamp for exp(logit_scale).")
 
+    # Scheduler
+    ap.add_argument("--warmup-epochs", type=int, default=3, help="Epoche di warmup lineare del LR.")
+    ap.add_argument(
+        "--min-lr-factor",
+        type=float,
+        default=0.1,
+        help="Fattore minimo del LR nel cosine decay: lr_min = lr * factor.",
+    )
+
     args = ap.parse_args()
 
     set_seed(args.seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
+    print("Questo è il device", device)
 
     # Modello + preprocess / tokenizer
     # open_clip ritorna (model, preprocess_train, preprocess_val)
@@ -352,7 +408,7 @@ def main() -> None:
     tokenizer = open_clip.get_tokenizer(args.model)
     model = model.to(device)
 
-    # (opz) freeze: default allena torre visiva; se `freeze_vision` -> solo logit_scale
+    # Gestione freeze/unfreeze
     if args.freeze_text:
         # Congela tutto tranne la torre visiva e logit_scale
         for name, p in model.named_parameters():
@@ -360,14 +416,29 @@ def main() -> None:
                 p.requires_grad = True
             else:
                 p.requires_grad = False
+
     if args.freeze_vision:
+        # allena solo logit_scale (e eventualmente testo, se non freeze_text)
         for p in model.visual.parameters():
-            p.requires_grad = False  # in questo caso si allena solo logit_scale
+            p.requires_grad = False
+        if hasattr(model, "logit_scale"):
+            model.logit_scale.requires_grad = True
+        print("[freeze] Vision encoder congelato. Si allena solo logit_scale (e testo se non congelato).")
+    else:
+        # logica 'seria': sblocca solo ultimi N blocchi visivi
+        unfreeze_last_visual_blocks(model, num_blocks=args.unfreeze_visual-blocks if hasattr(args, "unfreeze_visual-blocks") else 2)
 
     print(f"[freeze] trainable params = {_count_trainable(model)}")
 
     # Dati
     classes = json.loads(Path(args.classes).read_text(encoding="utf-8"))
+
+    # Aliases opzionali da JSON esterno
+    aliases_map = None
+    if args.aliases_json:
+        aliases_map = json.loads(Path(args.aliases_json).read_text(encoding="utf-8"))
+        print(f"[aliases] Caricati alias custom da {args.aliases_json}")
+
     train_ds = ManifestImageDataset(args.train_manifest, classes, preprocess_train)
     val_ds = ManifestImageDataset(args.val_manifest, classes, preprocess_val)
 
@@ -388,6 +459,17 @@ def main() -> None:
     optimizer = optim.AdamW(params, lr=args.lr, weight_decay=args.wd)
     scaler = torch.amp.GradScaler("cuda", enabled=torch.cuda.is_available())
 
+    # Scheduler: warmup lineare + cosine decay
+    def lr_lambda(epoch: int):
+        if epoch < args.warmup_epochs:
+            return float(epoch + 1) / float(max(1, args.warmup_epochs))
+        # progress in [0,1]
+        progress = (epoch - args.warmup_epochs) / float(max(1, args.epochs - args.warmup_epochs))
+        # cosine da 1 a min_lr_factor
+        return args.min_lr_factor + 0.5 * (1.0 - args.min_lr_factor) * (1.0 + np.cos(np.pi * progress))
+
+    scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_lambda)
+
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -399,7 +481,7 @@ def main() -> None:
     # Precompute text feature se il ramo testo è congelato, riusandoli ogni volta
     text_feats_fixed = None
     if args.freeze_text:
-        text_feats_fixed = build_text_features(classes, model, tokenizer, device)
+        text_feats_fixed = build_text_features(classes, model, tokenizer, device, aliases_map=aliases_map)
 
     max_lscale = float(args.max_logit_scale)
 
@@ -417,7 +499,7 @@ def main() -> None:
         text_feats = (
             text_feats_fixed
             if text_feats_fixed is not None
-            else build_text_features(classes, model, tokenizer, device)
+            else build_text_features(classes, model, tokenizer, device, aliases_map=aliases_map)
         )
         logit_scale = model.logit_scale
 
@@ -446,8 +528,13 @@ def main() -> None:
         )
 
         dt = time.time() - t0
+
+        scheduler.step()
+        cur_lr = scheduler.get_last_lr()[0]
+
         print(
             f"[{epoch:02d}/{args.epochs}] "
+            f"lr={cur_lr:.2e} "
             f"train_loss={train_loss:.4f} train_acc={train_acc:.4f}  "
             f"val_loss={val_loss:.4f} val_acc={val_acc:.4f}  ({dt:.1f}s)"
         )
@@ -455,6 +542,7 @@ def main() -> None:
         metrics.append(
             {
                 "epoch": epoch,
+                "lr": float(cur_lr),
                 "train_loss": float(train_loss),
                 "train_acc": float(train_acc),
                 "val_loss": float(val_loss),
@@ -484,7 +572,9 @@ def main() -> None:
     # Confusion matrix e per-class accuracy su validation
     num_classes = len(classes)
     text_feats_eval = (
-        text_feats_fixed if text_feats_fixed is not None else build_text_features(classes, model, tokenizer, device)
+        text_feats_fixed
+        if text_feats_fixed is not None
+        else build_text_features(classes, model, tokenizer, device, aliases_map=aliases_map)
     )
     cm, per_class_acc, y_true, y_pred = eval_confusion_and_per_class(
         model, val_loader, device, text_feats_eval, model.logit_scale, num_classes
@@ -493,7 +583,7 @@ def main() -> None:
     # stampa leggibile
     print("\nValidation per-class accuracy:")
     for i, cls in enumerate(classes):
-        print(f"  {cls:10s}: {per_class_acc[i]:.4f}")
+        print(f"  {cls:20s}: {per_class_acc[i]:.4f}")
 
     # salva su disco
     np.savetxt(out_dir / "confusion_matrix.csv", cm, fmt="%d", delimiter=",")
@@ -508,17 +598,51 @@ def main() -> None:
         va_loss = [m["val_loss"] for m in metrics]
         tr_acc = [m["train_acc"] for m in metrics]
         va_acc = [m["val_acc"] for m in metrics]
+        lrs = [m["lr"] for m in metrics]
 
-        plt.figure(); plt.plot(epochs_x, tr_loss, label="train"); plt.plot(epochs_x, va_loss, label="val"); plt.legend(); plt.xlabel("epoch"); plt.ylabel("loss"); plt.title("Loss curves"); plt.savefig(out_dir / "curves_loss.png", dpi=150); plt.close()
-        plt.figure(); plt.plot(epochs_x, tr_acc, label="train"); plt.plot(epochs_x, va_acc, label="val"); plt.legend(); plt.xlabel("epoch"); plt.ylabel("accuracy"); plt.title("Accuracy curves"); plt.savefig(out_dir / "curves_acc.png", dpi=150); plt.close()
+        plt.figure()
+        plt.plot(epochs_x, tr_loss, label="train")
+        plt.plot(epochs_x, va_loss, label="val")
+        plt.legend()
+        plt.xlabel("epoch")
+        plt.ylabel("loss")
+        plt.title("Loss curves")
+        plt.savefig(out_dir / "curves_loss.png", dpi=150)
+        plt.close()
 
-        plt.figure(); plt.imshow(cm, interpolation="nearest"); plt.title("Confusion Matrix (val)"); plt.colorbar();
-        tick = np.arange(num_classes); plt.xticks(tick, classes, rotation=45, ha="right"); plt.yticks(tick, classes)
-        plt.xlabel("Predicted"); plt.ylabel("True")
+        plt.figure()
+        plt.plot(epochs_x, tr_acc, label="train")
+        plt.plot(epochs_x, va_acc, label="val")
+        plt.legend()
+        plt.xlabel("epoch")
+        plt.ylabel("accuracy")
+        plt.title("Accuracy curves")
+        plt.savefig(out_dir / "curves_acc.png", dpi=150)
+        plt.close()
+
+        plt.figure()
+        plt.plot(epochs_x, lrs)
+        plt.xlabel("epoch")
+        plt.ylabel("lr")
+        plt.title("Learning rate schedule")
+        plt.savefig(out_dir / "lr_schedule.png", dpi=150)
+        plt.close()
+
+        plt.figure()
+        plt.imshow(cm, interpolation="nearest")
+        plt.title("Confusion Matrix (val)")
+        plt.colorbar()
+        tick = np.arange(num_classes)
+        plt.xticks(tick, classes, rotation=45, ha="right")
+        plt.yticks(tick, classes)
+        plt.xlabel("Predicted")
+        plt.ylabel("True")
         for i in range(num_classes):
             for j in range(num_classes):
                 plt.text(j, i, str(cm[i, j]), ha="center", va="center", fontsize=8)
-        plt.tight_layout(); plt.savefig(out_dir / "confusion_matrix.png", dpi=150); plt.close()
+        plt.tight_layout()
+        plt.savefig(out_dir / "confusion_matrix.png", dpi=150)
+        plt.close()
     except Exception as e:
         print(f"[warn] plotting skipped: {e}")
 

@@ -88,16 +88,22 @@ def load_backend(
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
     if backend == "clip":
-        model, _, preprocess = open_clip.create_model_and_transforms(
+        # Carico modello CLIP con stessi parametri del training
+        model, preprocess_train, preprocess_val = open_clip.create_model_and_transforms(
             clip_model, pretrained=pretrained
         )
+        preprocess = preprocess_val
         model = model.to(device).eval()
+
         if finetuned:
-            ckpt = torch.load(finetuned, map_location="cpu")
+            ckpt = torch.load(finetuned, map_location="cpu", weights_only=False)
             state = ckpt.get("model", ckpt.get("state_dict", ckpt))
-            model.load_state_dict(state, strict=False)
+            missing, unexpected = model.load_state_dict(state, strict=False)
             print(f"[finetuned] loaded: {finetuned}")
+            print(f"   missing={len(missing)}  unexpected={len(unexpected)}")
+
         return "clip", model, preprocess, device
+
     else:
         # Backend DINOv2
         model = torch.hub.load("facebookresearch/dinov2", dino_model)

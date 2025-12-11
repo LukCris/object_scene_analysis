@@ -76,7 +76,9 @@ def load_clip(
     model = model.to(device).eval()
 
     if finetuned:
-        ckpt = torch.load(finetuned, map_location="cpu")
+        # In PyTorch 2.6 `weights_only` di default è True e rompe con i checkpoint "ricchi".
+        # Qui il checkpoint è locale e fidato, quindi possiamo disattivarlo.
+        ckpt = torch.load(finetuned, map_location="cpu", weights_only=False)
         state = ckpt.get("model", ckpt.get("state_dict", ckpt))
         missing, unexpected = model.load_state_dict(state, strict=False)
         print(
